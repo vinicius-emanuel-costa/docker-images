@@ -137,6 +137,14 @@ docker-images/
 
 ---
 
+### Resultados e Impacto
+
+- **Redução de até 85% no tamanho das imagens** — Multi-stage builds eliminam dependências de build da imagem final
+- **Deploy mais rápido** — Imagens menores significam pull/push mais rápido e menos consumo de banda
+- **Segurança reforçada** — Imagens mínimas reduzem superfície de ataque e vulnerabilidades
+- **Padronização** — Dockerfiles reutilizáveis garantem consistência entre projetos e equipes
+- **Economia de recursos** — Containers mais leves consomem menos CPU e memória em produção
+
 ## Licenca
 
 MIT
