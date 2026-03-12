@@ -1,0 +1,11 @@
+*.tar
+*.log
+*.tar.gz
+*.env
+.env.*
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+vendor/
+tmp/

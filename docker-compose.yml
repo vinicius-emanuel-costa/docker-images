@@ -1,0 +1,108 @@
+##############################################################
+# Docker Compose — Build e teste de todas as imagens
+# Uso: docker compose build && docker compose up -d
+##############################################################
+
+services:
+
+  nginx-hardened:
+    build:
+      context: ./nginx-hardened
+      dockerfile: Dockerfile
+    container_name: nginx-hardened
+    ports:
+      - "8080:8080"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /var/log/nginx
+    restart: unless-stopped
+
+  python-app:
+    build:
+      context: ./python-app
+      dockerfile: Dockerfile
+    container_name: python-app
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_VERSION=1.0.0
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+  node-app:
+    build:
+      context: ./node-app
+      dockerfile: Dockerfile
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_VERSION=1.0.0
+      - NODE_ENV=production
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+  go-app:
+    build:
+      context: ./go-app
+      dockerfile: Dockerfile
+    container_name: go-app
+    ports:
+      - "8081:8080"
+    environment:
+      - APP_VERSION=1.0.0
+    read_only: true
+    restart: unless-stopped
+
+  mariadb:
+    image: mariadb:11
+    container_name: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=dev-only-password
+      - MARIADB_DATABASE=testdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: unless-stopped
+
+  mariadb-backup:
+    build:
+      context: ./mariadb-backup
+      dockerfile: Dockerfile
+    container_name: mariadb-backup
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=dev-only-password
+      - RETENTION_DAYS=7
+    volumes:
+      - backup-data:/backups
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  monitoring-agent:
+    build:
+      context: ./monitoring-agent
+      dockerfile: Dockerfile
+    container_name: monitoring-agent
+    ports:
+      - "9100:9100"
+      - "10050:10050"
+    environment:
+      - ZABBIX_SERVER=127.0.0.1
+      - ZABBIX_HOSTNAME=docker-monitor
+    privileged: false
+    restart: unless-stopped
+
+volumes:
+  mariadb-data:
+  backup-data:

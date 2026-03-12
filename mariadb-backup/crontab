@@ -1,0 +1,8 @@
+# MariaDB Backup Schedule
+# Formato: minuto hora dia mes dia-semana comando
+
+# Backup diario as 02:00
+0 2 * * * /scripts/backup.sh >> /var/log/backup.log 2>&1
+
+# Backup extra aos domingos as 06:00 (full)
+0 6 * * 0 /scripts/backup.sh >> /var/log/backup.log 2>&1
